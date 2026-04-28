@@ -55,9 +55,10 @@ def carregar_dados():
     ]
 
     import json
+    import os
     from google.oauth2.service_account import Credentials
 
-    creds_dict = json.loads(st.secrets["gcp_service_account"])
+    creds_dict = json.loads(os.environ["gcp_service_account"])
     creds = Credentials.from_service_account_info(creds_dict, scopes=scope)
     client = gspread.authorize(creds)
 
