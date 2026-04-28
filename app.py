@@ -54,12 +54,10 @@ def carregar_dados():
         "https://www.googleapis.com/auth/drive"
     ]
 
-    import json
-    import os
+    import json, os, base64
     from oauth2client.service_account import ServiceAccountCredentials
 
-    creds_dict = json.loads(os.environ["gcp_service_account"])
-    creds_dict["private_key"] = creds_dict["private_key"].replace("\\n", "\n")
+    creds_dict = json.loads(base64.b64decode(os.environ["gcp_service_account"]).decode())
     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
     client = gspread.authorize(creds)
 
