@@ -56,10 +56,11 @@ def carregar_dados():
 
     import json
     import os
-    from google.oauth2.service_account import Credentials
+    from oauth2client.service_account import ServiceAccountCredentials
 
     creds_dict = json.loads(os.environ["gcp_service_account"])
-    creds = Credentials.from_service_account_info(creds_dict, scopes=scope)
+    creds_dict["private_key"] = creds_dict["private_key"].replace("\\n", "\n")
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
     client = gspread.authorize(creds)
 
     sheet = client.open("BASE DE DADOS - HMRG")
