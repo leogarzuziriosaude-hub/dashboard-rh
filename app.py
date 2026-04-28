@@ -54,7 +54,11 @@ def carregar_dados():
         "https://www.googleapis.com/auth/drive"
     ]
 
-    creds = ServiceAccountCredentials.from_json_keyfile_name('credentials.json', scope)
+    import json
+    from google.oauth2.service_account import Credentials
+
+    creds_dict = json.loads(st.secrets["gcp_service_account"])
+    creds = Credentials.from_service_account_info(creds_dict, scopes=scope)
     client = gspread.authorize(creds)
 
     sheet = client.open("BASE DE DADOS - HMRG")
