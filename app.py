@@ -4,6 +4,7 @@ import plotly.express as px
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
+
 # 1. Configuração da página (Apenas uma vez)
 st.set_page_config(layout="wide", page_title="Dashboard HMRG")
 
@@ -57,8 +58,14 @@ def carregar_dados():
     import json, os, base64
     from oauth2client.service_account import ServiceAccountCredentials
 
-    creds_dict = json.loads(base64.b64decode(os.environ["gcp_service_account"]).decode())
-    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+    if os.path.exists('credentials.json'):
+        # LOCAL — usa o arquivo direto
+        creds = ServiceAccountCredentials.from_json_keyfile_name('credentials.json', scope)
+    else:
+        # RENDER — usa variável de ambiente
+        creds_dict = json.loads(base64.b64decode(os.environ["gcp_service_account"]).decode())
+        creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+
     client = gspread.authorize(creds)
 
     sheet = client.open("BASE DE DADOS - HMRG")
@@ -585,26 +592,6 @@ with tabs[2]:
     # ---------------- CENTRALIZAR GRÁFICO ----------------
     st.plotly_chart(fig_adm, use_container_width=True)
 
-# ---------------- PERMUTA ----------------
-#with tabs[5]:
-    st.title("PERMUTAS")
-
-    df_permuta = dados["PERMUTA"]
-
-    st.metric("Total de Permutas", len(df_permuta))
-
-    st.write(df_permuta.head())
-
-
-# ---------------- BENEFÍCIO ----------------
-#with tabs[6]:
-    st.title("BENEFÍCIO")
-
-    df_beneficio = dados["BENEFÍCIO"]
-
-    st.metric("Total de Registros", len(df_beneficio))
-
-    st.write(df_beneficio.head())
 
 
 # ---------------- ABSENTEÍSMO ----------------
